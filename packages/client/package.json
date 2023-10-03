@@ -1,0 +1,28 @@
+{
+  "name": "gamja-backend-client",
+  "version": "0.0.13",
+  "main": "dist/client/index.js",
+  "typings": "dist/client/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/client/index.d.ts",
+      "default": "./dist/client/index.js"
+    }
+  },
+  "scripts": {
+    "build": "sh build.sh",
+    "deploy": "pnpm run build && npm publish"
+  },
+  "files": [
+    "dist",
+    "package.json",
+    "README.md"
+  ],
+  "devDependencies": {
+    "rimraf": "^5.0.5",
+    "typescript": "^5.2.2"
+  },
+  "dependencies": {
+    "@nestia/fetcher": "^2.1.8"
+  }
+}

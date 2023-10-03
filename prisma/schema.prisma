@@ -1,0 +1,85 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  ADMIN
+  USER
+}
+
+model User {
+  id   String @id
+  name String
+
+  role     Role   @default(USER)
+  password String
+  salt     String
+
+  coins UserCoin[]
+
+  balance        BigInt           @default(0)
+  balanceHistory BalanceHistory[]
+  questions      Qna[]
+}
+
+model BalanceHistory {
+  id String @id @default(uuid())
+
+  user   User    @relation(fields: [userId], references: [id])
+  userId String
+  amount BigInt
+  reason String?
+
+  createdAt DateTime
+}
+
+model Coin {
+  id   String @id
+  name String
+
+  price    BigInt
+  minPrice BigInt
+  maxPrice BigInt
+  amount   BigInt
+
+  owners         UserCoin[]
+  priceHistories CoinPriceHistory[]
+}
+
+model UserCoin {
+  user      User   @relation(fields: [userId], references: [id])
+  coin      Coin   @relation(fields: [coinId], references: [id])
+  userId    String
+  coinId    String
+  amount    BigInt
+  lastPrice BigInt
+
+  @@id([userId, coinId])
+}
+
+model CoinPriceHistory {
+  id String @id @default(uuid())
+
+  coin   Coin   @relation(fields: [coinId], references: [id])
+  coinId String
+
+  price     BigInt
+  timestamp DateTime
+}
+
+model Qna {
+  id String @id @default(uuid())
+
+  user   User   @relation(fields: [userId], references: [id])
+  userId String
+
+  question   String    @db.Text
+  answer     String?   @db.Text
+  createdAt  DateTime
+  answeredAt DateTime?
+}
