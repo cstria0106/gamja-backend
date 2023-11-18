@@ -20,6 +20,10 @@ export class UserRepository {
     });
   }
 
+  async findMany(): Promise<User[]> {
+    return this.prisma.user.findMany();
+  }
+
   async createOne(
     data: Pick<User, 'id' | 'password' | 'salt' | 'name' | 'balance'>,
   ): Promise<void> {

@@ -5,6 +5,7 @@ import {
 } from '@nestjs/common';
 import { ExecutionContextHost } from '@nestjs/core/helpers/execution-context-host';
 
+import { Coin } from '../coin/coin.model';
 import { CryptoService } from '../crypto/crypto.service';
 import { required } from '../utils/required';
 import { BalanceHistory } from './balance-history.model';
@@ -24,6 +25,10 @@ export class UserService {
 
   async get(id: string): Promise<User.View.Default> {
     return this.users.findOne(id).then(required('user'));
+  }
+
+  async manageGetAll(): Promise<User.View.Manage[]> {
+    return this.users.findMany();
   }
 
   async getOwned(id: string): Promise<User.View.Owned> {
@@ -115,7 +120,7 @@ export class UserService {
     }
   }
 
-  async consumeCoin(
+  async consumeCoins(
     userId: string,
     coinId: string,
     amount: bigint,
@@ -131,5 +136,23 @@ export class UserService {
 
     await this.userCoins.updateOne(user.id, coinId, userCoin.amount - amount);
     return userCoin.amount - amount;
+  }
+
+  async consumeCoinsBatch(
+    userId: string,
+    coins: { id: string; amount: bigint }[],
+    index = 0,
+  ) {
+    if (index === coins.length) {
+      return;
+    }
+
+    await this.consumeCoins(userId, coins[index].id, coins[index].amount);
+    try {
+      await this.consumeCoinsBatch(userId, coins, index + 1);
+    } catch (e) {
+      await this.giveCoins(userId, coins[index].id, coins[index].amount);
+      throw e;
+    }
   }
 }

@@ -30,7 +30,7 @@ export class MarketService {
     await this.coins.updateOne(coin.id, { amount: coin.amount + amount });
     try {
       // Seller pays coins
-      await this.user.consumeCoin(sellerId, coin.id, amount);
+      await this.user.consumeCoins(sellerId, coin.id, amount);
 
       try {
         // Give seller money
