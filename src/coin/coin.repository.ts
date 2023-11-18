@@ -8,7 +8,11 @@ export class CoinRepository {
   constructor(private readonly prisma: PrismaService) {}
 
   async findMany(): Promise<Coin[]> {
-    return this.prisma.coin.findMany();
+    return this.prisma.coin.findMany({
+      orderBy: {
+        amount: 'desc',
+      },
+    });
   }
 
   async findOne(id: string): Promise<Coin | null> {
