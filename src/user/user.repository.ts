@@ -36,13 +36,14 @@ export class UserRepository {
     id: string,
     data: {
       balance?: bigint;
+      password?: string;
+      salt?: string;
+      name?: string;
     },
   ) {
     await this.prisma.user.update({
       where: { id },
-      data: {
-        balance: data.balance,
-      },
+      data,
     });
   }
 }

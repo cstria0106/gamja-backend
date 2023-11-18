@@ -155,4 +155,24 @@ export class UserService {
       throw e;
     }
   }
+
+  async update(
+    userId: string,
+    data: {
+      balance?: bigint;
+      password?: string;
+      name?: string;
+    },
+  ): Promise<void> {
+    const encrypted =
+      data.password !== undefined
+        ? await this.crypto.encrypt(data.password)
+        : undefined;
+
+    await this.users.updateOne(userId, {
+      ...data,
+      password: encrypted?.[0]?.toString('base64'),
+      salt: encrypted?.[1]?.toString('base64'),
+    });
+  }
 }

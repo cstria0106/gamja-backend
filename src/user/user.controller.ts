@@ -71,6 +71,14 @@ export module ManageConsumeUserCoins {
   };
 }
 
+export module ManageUpdateUser {
+  export type Body = {
+    name?: string;
+    password?: string;
+    balance?: string;
+  };
+}
+
 @Controller('user')
 export class UserController {
   constructor(private readonly user: UserService) {}
@@ -158,5 +166,17 @@ export class UserController {
         balance: user.balance.toString(),
       })),
     }));
+  }
+
+  @Roles(['ADMIN'])
+  @TypedRoute.Put(':id')
+  async manageUpdateUser(
+    @TypedParam('id') userId: string,
+    @TypedBody() body: ManageUpdateUser.Body,
+  ): Promise<void> {
+    await this.user.update(userId, {
+      ...body,
+      balance: bigint(body.balance),
+    });
   }
 }

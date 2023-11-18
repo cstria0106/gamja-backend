@@ -17,6 +17,6 @@ export class CryptoService {
       'sha512',
     );
 
-    return [cipher, salt];
+    return [cipher, salt] as const;
   }
 }
